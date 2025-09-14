@@ -2,12 +2,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FileText, Menu, X, Crown, User, Settings } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navigation = [
-    { name: "Templates", href: "#templates" },
+    { name: "Templates", href: "/templates" },
     { name: "Features", href: "#features" },
     { name: "Pricing", href: "#pricing" },
     { name: "Examples", href: "#examples" },
@@ -34,25 +35,29 @@ const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             {navigation.map((item) => (
-              <a
+              <Link
                 key={item.name}
-                href={item.href}
+                to={item.href.startsWith('/') ? item.href : `/${item.href.slice(1)}`}
                 className="text-muted-foreground hover:text-foreground transition-colors duration-200 font-medium"
               >
                 {item.name}
-              </a>
+              </Link>
             ))}
           </nav>
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" size="sm">
-              <User className="w-4 h-4 mr-2" />
-              Sign In
-            </Button>
-            <Button variant="premium" size="sm">
-              Get Started
-            </Button>
+            <Link to="/auth">
+              <Button variant="ghost" size="sm">
+                <User className="w-4 h-4 mr-2" />
+                Sign In
+              </Button>
+            </Link>
+            <Link to="/auth">
+              <Button variant="premium" size="sm">
+                Get Started
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -73,23 +78,27 @@ const Header = () => {
           <div className="md:hidden py-4 border-t border-white/10 animate-fade-in">
             <nav className="flex flex-col space-y-4">
               {navigation.map((item) => (
-                <a
+                <Link
                   key={item.name}
-                  href={item.href}
+                  to={item.href.startsWith('/') ? item.href : `/${item.href.slice(1)}`}
                   className="text-muted-foreground hover:text-foreground transition-colors duration-200 font-medium px-2 py-1"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
-                </a>
+                </Link>
               ))}
               <div className="flex flex-col space-y-3 pt-4 border-t border-white/10">
-                <Button variant="ghost" size="sm" className="justify-start">
-                  <User className="w-4 h-4 mr-2" />
-                  Sign In
-                </Button>
-                <Button variant="premium" size="sm">
-                  Get Started
-                </Button>
+                <Link to="/auth">
+                  <Button variant="ghost" size="sm" className="justify-start w-full">
+                    <User className="w-4 h-4 mr-2" />
+                    Sign In
+                  </Button>
+                </Link>
+                <Link to="/auth">
+                  <Button variant="premium" size="sm" className="w-full">
+                    Get Started
+                  </Button>
+                </Link>
               </div>
             </nav>
           </div>

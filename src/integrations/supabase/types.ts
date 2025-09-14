@@ -14,7 +14,105 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          subscription_tier: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          subscription_tier?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          subscription_tier?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      resume_templates: {
+        Row: {
+          category: string
+          created_at: string
+          downloads: number | null
+          id: string
+          is_premium: boolean | null
+          name: string
+          preview_url: string | null
+          rating: number | null
+          template_data: Json
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          downloads?: number | null
+          id: string
+          is_premium?: boolean | null
+          name: string
+          preview_url?: string | null
+          rating?: number | null
+          template_data?: Json
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          downloads?: number | null
+          id?: string
+          is_premium?: boolean | null
+          name?: string
+          preview_url?: string | null
+          rating?: number | null
+          template_data?: Json
+        }
+        Relationships: []
+      }
+      resumes: {
+        Row: {
+          content: Json
+          created_at: string
+          id: string
+          is_public: boolean | null
+          template_id: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content?: Json
+          created_at?: string
+          id?: string
+          is_public?: boolean | null
+          template_id?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          id?: string
+          is_public?: boolean | null
+          template_id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

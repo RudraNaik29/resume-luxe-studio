@@ -2,13 +2,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Eye, Star, Crown, Briefcase, Palette } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import template1 from "@/assets/template-1.jpg";
 import template2 from "@/assets/template-2.jpg";
 import template3 from "@/assets/template-3.jpg";
 
 const templates = [
   {
-    id: 1,
+    id: "executive-pro",
     name: "Executive Pro",
     category: "Executive",
     preview: template1,
@@ -19,9 +23,9 @@ const templates = [
     gradient: "from-purple-600 to-blue-600"
   },
   {
-    id: 2,
+    id: "creative-edge",
     name: "Creative Edge",
-    category: "Creative",
+    category: "Creative", 
     preview: template2,
     isPremium: false,
     rating: 4.8,
@@ -30,7 +34,7 @@ const templates = [
     gradient: "from-pink-500 to-orange-500"
   },
   {
-    id: 3,
+    id: "tech-innovator",
     name: "Tech Innovator",
     category: "Technology",
     preview: template3,
@@ -41,7 +45,7 @@ const templates = [
     gradient: "from-cyan-500 to-blue-500"
   },
   {
-    id: 4,
+    id: "modern-minimal",
     name: "Modern Minimal",
     category: "Minimalist",
     preview: template1,
@@ -52,7 +56,7 @@ const templates = [
     gradient: "from-green-500 to-teal-500"
   },
   {
-    id: 5,
+    id: "professional-plus",
     name: "Professional Plus",
     category: "Business",
     preview: template3,
@@ -63,7 +67,7 @@ const templates = [
     gradient: "from-indigo-600 to-purple-600"
   },
   {
-    id: 6,
+    id: "designers-choice",
     name: "Designer's Choice",
     category: "Creative",
     preview: template2,
@@ -76,6 +80,58 @@ const templates = [
 ];
 
 const Templates = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const useTemplate = async (templateId: string, isPremium: boolean) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate("/auth");
+        return;
+      }
+
+      // Create a new resume with the selected template
+      const { data, error } = await supabase
+        .from("resumes")
+        .insert([
+          {
+            user_id: user.id,
+            title: "New Resume",
+            template_id: templateId,
+            content: {
+              personalInfo: {
+                fullName: "",
+                email: "",
+                phone: "",
+                location: "",
+                summary: ""
+              },
+              experience: [],
+              education: [],
+              skills: []
+            }
+          }
+        ])
+        .select()
+        .single();
+
+      if (error) throw error;
+      
+      toast({
+        title: "Template selected!",
+        description: "Your new resume is ready to edit.",
+      });
+      
+      navigate(`/builder/${data.id}`);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to create resume with template",
+        variant: "destructive",
+      });
+    }
+  };
   return (
     <section className="py-24 px-6 bg-background relative overflow-hidden">
       {/* Background Elements */}
@@ -132,10 +188,19 @@ const Templates = () => {
 
                      {/* Hover Overlay */}
                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                       <Button variant="glass" size="lg" className="transform scale-90 group-hover:scale-100 transition-transform duration-300">
-                         <Eye className="w-5 h-5 mr-2" />
-                         Preview
-                       </Button>
+                       <div className="flex gap-2">
+                         <Button variant="glass" size="sm">
+                           <Eye className="w-4 h-4 mr-2" />
+                           Preview
+                         </Button>
+                         <Button 
+                           variant="glass" 
+                           size="sm"
+                           onClick={() => useTemplate(template.id, template.isPremium)}
+                         >
+                           Use Template
+                         </Button>
+                       </div>
                      </div>
                   </div>
 
@@ -157,6 +222,7 @@ const Templates = () => {
                     <Button 
                       variant={template.isPremium ? "premium" : "default"} 
                       className="w-full"
+                      onClick={() => useTemplate(template.id, template.isPremium)}
                     >
                       {template.isPremium ? "Use Premium" : "Use Template"}
                     </Button>
@@ -169,10 +235,12 @@ const Templates = () => {
 
         {/* View All Templates Button */}
         <div className="text-center animate-fade-in">
-          <Button variant="hero" size="lg" className="px-12 py-4 text-lg">
-            View All Templates
-            <Crown className="w-5 h-5 ml-2" />
-          </Button>
+          <Link to="/templates">
+            <Button variant="hero" size="lg" className="px-12 py-4 text-lg">
+              View All Templates
+              <Crown className="w-5 h-5 ml-2" />
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
